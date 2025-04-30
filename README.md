@@ -50,7 +50,7 @@ A simple AI-powered coding assistant using Google's Gemini API, with a modern we
 - "Create a simple REST API using Flask."
 
 ## Demo
-![Web UI Screenshot](screenshot.png)
+![Web UI Screenshot](./assets/images/demo.png)
 
 ## Credits
 
