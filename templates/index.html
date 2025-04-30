@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeHelper - AI Programming Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --background-color: #f8fafc;
+            --text-color: #1e293b;
+            --chat-bg: #ffffff;
+            --user-bubble: #e0e7ff;
+            --bot-bubble: #f1f5f9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: var(--chat-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-container {
+            background-color: var(--chat-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 60vh;
+            overflow-y: auto;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-message {
+            align-items: flex-end;
+        }
+
+        .bot-message {
+            align-items: flex-start;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            margin: 0.3rem 0;
+        }
+
+        .user-message .message-content {
+            background-color: var(--user-bubble);
+            color: var(--primary-color);
+        }
+
+        .bot-message .message-content {
+            background-color: var(--bot-bubble);
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 0.8rem 1rem;
+            background-color: var(--bot-bubble);
+            border-radius: 10px;
+            margin: 0.3rem 0;
+            width: fit-content;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--text-color);
+            border-radius: 50%;
+            margin-right: 3px;
+            animation: typing 1s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Markdown styles */
+        .message-content pre {
+            background-color: #f6f8fa;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .message-content code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 0.9em;
+        }
+
+        .message-content p {
+            margin-bottom: 1rem;
+        }
+
+        .message-content ul, .message-content ol {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+
+        .message-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .message-content h1, .message-content h2, .message-content h3 {
+            margin: 1.5rem 0 1rem;
+            color: var(--text-color);
+        }
+
+        .message-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .message-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Coding Agent</h1>
+            <p>Your AI Programming Assistant</p>
+        </header>
+
+        <div class="chat-container" id="chat-container">
+            <div class="message bot-message">
+                <div class="message-content">
+                    Hello! I'm CodeHelper, your AI programming assistant. I can help you with:
+                    <ul>
+                        <li>Writing and reviewing code</li>
+                        <li>Debugging issues</li>
+                        <li>Explaining programming concepts</li>
+                        <li>Suggesting best practices</li>
+                        <li>Answering technical questions</li>
+                    </ul>
+                    How can I help you today?
+                </div>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    <footer style="text-align:center; margin-top:30px; padding:20px 0; color:#777; font-size:0.95em;">
+        Built by Thameem &mdash; <a href="https://github.com/Thameem-20/Coding-Agent" target="_blank" style="color:#2563eb; text-decoration:none;">GitHub</a>
+    </footer>
+
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+
+        // Configure marked options
+        marked.setOptions({
+            highlight: function(code, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    return hljs.highlight(code, { language: lang }).value;
+                }
+                return hljs.highlightAuto(code).value;
+            },
+            breaks: true
+        });
+
+        // Handle Enter key
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message === '') return;
+
+            // Add user message to chat
+            addMessage(message, 'user');
+            userInput.value = '';
+
+            // Show typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'typing-indicator';
+            typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+            chatContainer.appendChild(typingIndicator);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // Send message to server
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Remove typing indicator
+                chatContainer.removeChild(typingIndicator);
+                // Add bot response
+                addMessage(data.response, 'bot');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                chatContainer.removeChild(typingIndicator);
+                addMessage('Sorry, there was an error processing your request.', 'bot');
+            });
+        }
+
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            
+            if (sender === 'bot') {
+                // Render markdown for bot messages
+                contentDiv.innerHTML = marked.parse(text);
+                // Apply syntax highlighting
+                contentDiv.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+            } else {
+                contentDiv.textContent = text;
+            }
+            
+            messageDiv.appendChild(contentDiv);
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html> 
